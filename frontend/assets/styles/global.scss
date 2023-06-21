@@ -1,0 +1,23 @@
+#__nuxt,
+html,
+body {
+    height: 100%;
+
+}
+
+body {
+    background-color: $primary-bg;
+    margin: 0;
+    padding: 0;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    transition: color 0.2s, background-color 0.2s, border-color 0.2s,
+        opacity 0.2s;
+    // font-family: "Open Sans", sans-serif;
+    font-family: "Comfortaa", sans-serif;
+}

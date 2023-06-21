@@ -1,0 +1,175 @@
+<template>
+    <div :class="['app-input', { 'error-border': error }]">
+        <label v-if="label" class="app-input__label">{{ label }}</label>
+        <el-input v-bind="$attrs" v-model="value" :class="{
+            resize: resize,
+            prepend: prepend,
+        }">
+            <template #suffix>
+                <span :class="[
+                    'el-input__count',
+                    { disabled: !showWordLimit || !value },
+                ]" v-if="showWordLimit">
+                    <span class="el-input__count-inner">
+                        <span :class="[
+                            'current-length',
+                            { warning: value.length < props.minLength },
+                        ]">{{ value.length }}</span>
+                        /
+                        <span class="max-length">{{ maxLength }}</span>
+                    </span>
+                </span>
+            </template>
+            <template #prepend v-if="prepend">
+                {{ prepend }}
+            </template>
+        </el-input>
+    </div>
+</template>
+<script setup>
+const props = defineProps({
+    modelValue: {
+        type: String,
+        default: "",
+    },
+    height: {
+        type: String,
+        default: "40px",
+    },
+    append: {
+        type: String,
+        default: "",
+    },
+    showWordLimit: {
+        type: Boolean,
+        default: false,
+    },
+    minLength: {
+        type: Number,
+        default: 0,
+    },
+    maxLength: {
+        type: Number,
+        default: 0,
+    },
+    resizeOnFocus: {
+        type: Boolean,
+        default: true,
+    },
+    typingPlaceholderValues: {
+        type: Array,
+        default: () => [],
+    },
+    label: {
+        type: String,
+        default: "",
+    },
+    error: {
+        type: Boolean,
+        default: false,
+    },
+    prepend: {
+        type: String,
+        default: null,
+    },
+});
+const height = ref(props.height);
+const value = ref(props.modelValue);
+const showWordLimit = ref(props.showWordLimit);
+const emit = defineEmits(["update:modelValue", "max-length"]);
+const resize = ref(false);
+
+watch(value, (val) => {
+    if (props.maxLength && val.length > props.maxLength) {
+        value.value = val.slice(0, props.maxLength);
+        emit("max-length");
+    }
+    emit("update:modelValue", val);
+});
+</script>
+<style lang="scss">
+.app-input {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    height: min-content;
+
+    .app-input__label {
+        padding-left: 5px;
+        font-size: 14px;
+        color: var(--app-input-label, #{$secondary-text});
+    }
+
+    &.error-border {
+        --app-input-border: var(--app-input-error-border, #{$error-color-1});
+        --app-input-hover-border: var(--app-input-error-border, #{$error-color-1});
+        --app-input-focus-border: var(--app-input-error-border, #{$error-color-1});
+    }
+
+    .el-textarea,
+    .el-input {
+        flex-grow: 1;
+        --el-input-bg-color: var(--app-input-bg, #{$secondary-bg});
+        --el-fill-color-blank: var(--app-input-bg, #{$secondary-bg});
+        --el-input-border-color: var(--app-input-border, #{$quaternary-text});
+        --el-input-hover-border-color: var(--app-input-hover-border,
+            #{$tertiary-text});
+        --el-input-focus-border-color: var(--app-input-focus-border,
+            #{$accent-1});
+        --el-input-text-color: var(--app-input-text, #{$primary-text});
+        --el-input-border-radius: var(--app-input-border-radius, 10px);
+
+        &.prepend {
+            --el-input-border-radius: 0 var(--app-input-border-radius, 10px) var(--app-input-border-radius, 10px) 0;
+        }
+
+        .el-input-group__prepend {
+            border-radius: var(--app-input-border-radius, 10px) 0 0 var(--app-input-border-radius, 10px);
+        }
+
+        .el-input-group__append,
+        .el-input-group__prepend {
+            background-color: var(--app-input-bg, #{$tertiary-bg});
+            color: var(--app-input-text, #{$secondary-text});
+            user-select: none;
+        }
+
+        --el-input-height: v-bind(height);
+
+        &.resize {
+            @media screen and (-webkit-min-device-pixel-ratio: 0) {
+
+                select:focus,
+                textarea:focus,
+                input:focus {
+                    font-size: 16px;
+                }
+            }
+        }
+
+        textarea {
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+        }
+
+        .el-input__count {
+            opacity: 1;
+            user-select: none;
+
+            &.disabled {
+                opacity: 0;
+            }
+
+            .el-input__count-inner {
+                .current-length {
+                    &.warning {
+                        color: #{$error-color-1};
+                    }
+                }
+            }
+        }
+    }
+}
+</style>

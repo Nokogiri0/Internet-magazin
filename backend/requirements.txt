@@ -1,0 +1,16 @@
+passlib
+alembic
+sqlalchemy==1.4.41
+fastapi-jwt-auth[asymmetric]
+bcrypt
+pillow
+python-multipart
+werkzeug
+psycopg2
+sqlalchemy-utils
+uvicorn
+sqlalchemy_mptt
+phonenumbers
+
+pytest
+requests
